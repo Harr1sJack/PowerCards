@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
-
     [SerializeField] private Button createRoomBtn;
     [SerializeField] private Button joinRoomBtn;
     [SerializeField] private TMP_InputField hostInputField;

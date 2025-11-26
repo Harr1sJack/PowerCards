@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+//player data
 public class PlayerState
 {
     public ulong clientId;

@@ -57,7 +57,6 @@ public class GameManager : NetworkBehaviour
         base.OnNetworkSpawn();
         if (IsServer)
         {
-            // Initial collection of player IDs upon spawn (updated later in OnAllPlayersConnected)
             playerIds = NetworkManager.Singleton.ConnectedClients.Keys.ToList();
         }
     }
@@ -114,8 +113,6 @@ public class GameManager : NetworkBehaviour
     public void OnAllPlayersConnected()
     {
         if (!IsServer) return;
-
-        // Ensure playerIds is final before starting match
         playerIds = NetworkManager.Singleton.ConnectedClients.Keys.ToList();
 
         StartMatchServerSide();
@@ -154,7 +151,6 @@ public class GameManager : NetworkBehaviour
             handCards = playerStates[p0Id].hand.ToArray(),
             opponentDeckCount = playerStates[p1Id].deck.Count,
             currentCost = 1,
-            // FIX: Added specific deck counts so GameController doesn't read 0
             p0DeckCount = playerStates[p0Id].deck.Count,
             p1DeckCount = playerStates[p1Id].deck.Count
         };
@@ -167,7 +163,6 @@ public class GameManager : NetworkBehaviour
             handCards = playerStates[p1Id].hand.ToArray(),
             opponentDeckCount = playerStates[p0Id].deck.Count,
             currentCost = 1,
-            // FIX: Added specific deck counts
             p0DeckCount = playerStates[p0Id].deck.Count,
             p1DeckCount = playerStates[p1Id].deck.Count
         };
@@ -193,7 +188,7 @@ public class GameManager : NetworkBehaviour
             p.hasSubmitted = false;
         }
 
-        // P0's event
+        // P0 event
         JSONEvent p0TurnEvent = new JSONEvent
         {
             action = GameState.TurnStart,
@@ -202,13 +197,12 @@ public class GameManager : NetworkBehaviour
             handCards = playerStates[p0Id].hand.ToArray(),
             currentCost = currentTurn,
             opponentDeckCount = playerStates[p1Id].deck.Count,
-            // FIX: Explicitly set P0 and P1 deck counts
             p0DeckCount = playerStates[p0Id].deck.Count,
             p1DeckCount = playerStates[p1Id].deck.Count
         };
         networkAdapter.SendEventToClient(p0TurnEvent, p0Id);
 
-        // P1's event
+        // P1 event
         JSONEvent p1TurnEvent = new JSONEvent
         {
             action = GameState.TurnStart,
@@ -217,7 +211,6 @@ public class GameManager : NetworkBehaviour
             handCards = playerStates[p1Id].hand.ToArray(),
             currentCost = currentTurn,
             opponentDeckCount = playerStates[p0Id].deck.Count,
-            // FIX: Explicitly set P0 and P1 deck counts
             p0DeckCount = playerStates[p0Id].deck.Count,
             p1DeckCount = playerStates[p1Id].deck.Count
         };
@@ -245,18 +238,17 @@ public class GameManager : NetworkBehaviour
         EnablePanel(PanelType.Game);
     }
 
+    [ClientRpc]
+    public void OpenResultPanelForAllClientRpc()
+    {
+        EnablePanel(PanelType.Result);
+    }
+
     private void OnJSONNetworkEvent(JSONEventFromNetwork netEvt)
     {
         var ev = JsonUtility.FromJson<JSONEvent>(netEvt.json);
         if (ev.action == GameState.PlayerEndTurn)
         {
-            // Stop timer immediately when first client submits? 
-            // NO. This was a bug in the uploaded code. 
-            // If Client A submits, you shouldn't stop the timer for Client B.
-            // Only stop if ALL have submitted.
-            // Commenting out StopAllCoroutines() here.
-            // StopAllCoroutines(); 
-
             HandleClientEndTurn(netEvt.senderClientId, ev.cardIds);
         }
     }
@@ -309,6 +301,9 @@ public class GameManager : NetworkBehaviour
                         player.DrawTopToHand();
                     }
                     break;
+                case CardSO.AbilityTypes.DoublePower:
+                    player.score *= 2;
+                    break;
                 default:
                     break;
             }
@@ -355,6 +350,7 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
+            //OpenResultPanelForAllClientRpc();
             var endGameEvent = new JSONEvent
             {
                 action = GameState.GameEnd,

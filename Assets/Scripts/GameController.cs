@@ -205,7 +205,7 @@ public class GameController : MonoBehaviour
         int myFinalScore = (myIndex == 0) ? ev.p0Score : ev.p1Score;
         int oppFinalScore = (myIndex == 0) ? ev.p1Score : ev.p0Score;
 
-        GameManager.Instance.EnablePanel(GameManager.PanelType.Result);
+        GameManager.Instance.OpenResultPanelForAllClientRpc();
 
         if (GameManager.Instance.resultController != null)
         {

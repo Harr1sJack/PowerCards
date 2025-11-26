@@ -17,5 +17,5 @@ MonoBehaviour:
   cost: 1
   power: 5
   ability:
-    abilityType: 5
+    abilityType: 3
     value: 1

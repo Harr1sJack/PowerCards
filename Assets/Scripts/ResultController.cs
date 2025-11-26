@@ -11,9 +11,7 @@ public class ResultController : MonoBehaviour
 
     private void Start()
     {
-        // Assuming GameManager is the root object and persists across scenes/panels
         returnToMenuButton.onClick.AddListener(ReturnToMenu);
-        gameObject.SetActive(false);
     }
 
     public void ShowResults(int myScore, int opponentScore)
@@ -40,7 +38,6 @@ public class ResultController : MonoBehaviour
 
     private void ReturnToMenu()
     {
-        // Simple disconnect and return to menu
         if (Unity.Netcode.NetworkManager.Singleton.IsHost)
         {
             Unity.Netcode.NetworkManager.Singleton.Shutdown();

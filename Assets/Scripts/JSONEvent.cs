@@ -11,14 +11,11 @@ public class JSONEvent
     public int turnNumber;
     public int p0Score;
     public int p1Score;
-
-    // --- FIX: Add fields for deck counts (used in GameStart/TurnStart/Reveal) ---
     public int p0DeckCount;
     public int p1DeckCount;
 
     //player specific
     public int[] handCards;
-    // DEPRECATED: opponentDeckCount is now covered by p0DeckCount/p1DeckCount, but keeping it for backward compatibility with existing handlers.
     public int opponentDeckCount;
     public int currentCost;
 }

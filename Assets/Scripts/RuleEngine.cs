@@ -6,7 +6,6 @@ public static class RuleEngine
     {
         public int p0Delta;
         public int p1Delta;
-        // you can add lists: removedIdsP0, removedIdsP1 etc.
     }
 
     public static TurnResult Resolve(List<int> p0Played, List<int> p1Played, System.Func<int, CardSO> lookup)
